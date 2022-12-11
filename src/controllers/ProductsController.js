@@ -32,8 +32,8 @@ const getProduct = async (req, res) => {
 
 const postProduct = async (req, res) => {
     try {
-        const _id = await productsApi.add(req.body);
-        res.json({ _id: _id });
+        const id = await productsApi.add(req.body);
+        res.json({ id: id });
     } catch (error) {
         logger.logError(error);
 
