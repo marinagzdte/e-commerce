@@ -1,14 +1,18 @@
 import { Router } from 'express';
-import validateAdmin from '../utils/validateAdmin.js';
-import { getMessage, postMessage, deleteMessage } from '../controllers/MessagesController.js'
+import { checkAuth, checkAdmin } from '../middlewares/auth.js';
+import { getMessages, getMessage, postMessage, deleteMessage } from '../controllers/MessagesController.js'
 import logger from '../utils/logger.js';
 
 const messageRouter = Router();
 
-messageRouter.get('/:id?', logger.logReqInfo, getMessage);
+// si el usuario es admin trae todos los mensajes
+// sino, trae todos los usuarios "de" o "para" el usuario logueado
+messageRouter.get('/', logger.logReqInfo, checkAuth, getMessages);
 
-messageRouter.post('/', logger.logReqInfo, postMessage);
+messageRouter.get('/:id', logger.logReqInfo, checkAdmin, getMessage);
 
-messageRouter.delete('/:id?', logger.logReqInfo, validateAdmin, deleteMessage);
+messageRouter.post('/', logger.logReqInfo, checkAuth, postMessage);
+
+messageRouter.delete('/:id?', logger.logReqInfo, checkAdmin, deleteMessage);
 
 export default messageRouter;
