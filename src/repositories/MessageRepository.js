@@ -25,7 +25,7 @@ export class MessagesRepository {
     }
 
     async add(doc) {
-        const id = await this.#dao.save(asDto(doc))
+        const id = await this.#dao.save(doc)
         return id
     }
 

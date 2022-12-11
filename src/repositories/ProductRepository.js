@@ -1,17 +1,18 @@
-import CartsDaoFactory from '../daos/carts/CartsDaoFactory.js'
-import { asDto } from '../dtos/CartDto.js'
+//import Product from '../models/Product.js'
+import ProductsDaoFactory from '../daos/products/ProductsDaoFactory.js'
+import { asDto } from '../dtos/ProductDTO.js'
 import logger from '../utils/logger.js'
 
-export class CartRepository {
+export class ProductsRepository {
     #dao
 
     constructor() {
-        this.#dao = CartsDaoFactory.getDao()
+        this.#dao = ProductsDaoFactory.getDao()
     }
 
     async getAll() {
-        const carts = asDto(await this.#dao.getAll())
-        return carts;
+        const products = asDto(await this.#dao.getAll())
+        return products;
     }
 
     async getById(id) {
