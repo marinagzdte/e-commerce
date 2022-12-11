@@ -1,16 +1,16 @@
 import { Router } from 'express';
-import validateAdmin from '../utils/validateAdmin.js';
+import { checkAdmin, checkAuth } from '../middlewares/auth.js';
 import { getProduct, postProduct, putProduct, deleteProduct } from '../controllers/ProductsController.js'
 import logger from '../utils/logger.js';
 
 const productRouter = Router();
 
-productRouter.get('/:id?', logger.logReqInfo, getProduct);
+productRouter.get('/:id?', logger.logReqInfo, checkAuth, getProduct);
 
-productRouter.post('/', logger.logReqInfo, validateAdmin, postProduct);
+productRouter.post('/', logger.logReqInfo, checkAdmin, postProduct);
 
-productRouter.put('/:id', logger.logReqInfo, validateAdmin, putProduct);
+productRouter.put('/:id', logger.logReqInfo, checkAdmin, putProduct);
 
-productRouter.delete('/:id?', logger.logReqInfo, validateAdmin, deleteProduct);
+productRouter.delete('/:id?', logger.logReqInfo, checkAdmin, deleteProduct);
 
 export default productRouter;
