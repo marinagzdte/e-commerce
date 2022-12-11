@@ -15,7 +15,7 @@ class Logger {
         }
 
         this.logReqInfo = (req, res, next) => {
-            this.logger.info(`Ruta ${req.path} metodo ${req.method}`);
+            this.logger.info(`Ruta ${req.baseUrl + req.path} metodo ${req.method}`);
             next();
         }
 
