@@ -2,12 +2,6 @@ import MongoDbProductsDao from './MongoDbProductsDao.js'
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 
-// import FirebaseProductsDao from './FirebaseProductsDao.js'
-// import yargs from 'yargs/yargs';
-// import { hideBin } from 'yargs/helpers'
-
-// const argv = yargs(hideBin(process.argv)).argv;
-// const option = argv.persistence || 'mongo';
 const persistence = process.env.PERSISTENCE;
 console.log(`Persistencia seleccionada: ${persistence}`);
 
@@ -23,7 +17,7 @@ switch (persistence) {
         dao = new MongoDbProductsDao()
 }
 
-export default class PersonasDaoFactory {
+export default class ProductsDaoFactory {
     static getDao() {
         return dao
     }
