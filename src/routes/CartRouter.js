@@ -1,19 +1,26 @@
 import { Router } from 'express';
-import { postCart, postProduct, getCartsProducts, deleteCart, deleteProduct, deleteAllProducts } from '../controllers/CartsController.js';
+import { checkAuth, checkAdmin } from '../middlewares/auth.js';
+import { getCarts, postCart, postProduct, getCartsProducts, deleteCart, deleteProduct, deleteAllProducts } from '../controllers/CartsController.js';
 import logger from '../utils/logger.js';
 
 const cartRouter = Router();
 
-cartRouter.post('/', logger.logReqInfo, postCart);
+cartRouter.post('/', logger.logReqInfo, checkAdmin, postCart);
 
-cartRouter.delete('/:id', logger.logReqInfo, deleteCart);
+cartRouter.delete('/:id', logger.logReqInfo, checkAdmin, deleteCart);
 
-cartRouter.get('/:id/productos', logger.logReqInfo, getCartsProducts);
+cartRouter.get('/', logger.logReqInfo, checkAdmin, getCarts);
 
-cartRouter.post('/:id/productos', logger.logReqInfo, postProduct);
+// to do: check cart belongs to non admin user
+cartRouter.get('/:id/productos', logger.logReqInfo, checkAuth, getCartsProducts);
 
-cartRouter.delete('/:id/productos/:id_prod', logger.logReqInfo, deleteProduct);
+// to do: check cart belongs to non admin user
+cartRouter.post('/:id/productos', logger.logReqInfo, checkAuth, postProduct);
 
-cartRouter.delete('/:id/productos', logger.logReqInfo, deleteAllProducts);
+// to do: check cart belongs to non admin user
+cartRouter.delete('/:id/productos/:id_prod', logger.logReqInfo, checkAuth, deleteProduct);
+
+// to do: check cart belongs to non admin user
+cartRouter.delete('/:id/productos', logger.logReqInfo, checkAuth, deleteAllProducts);
 
 export default cartRouter;

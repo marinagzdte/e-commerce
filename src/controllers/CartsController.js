@@ -4,10 +4,22 @@ import logger from '../utils/logger.js';
 
 const cartsApi = new CartRepository();
 
+const getCarts = async (req, res) => {
+    try {
+        const carts = await cartsApi.getAll();
+        res.json(carts);
+    } catch (error) {
+        logger.logError(error);
+
+        res.status(500);
+        res.json({ error: -6, descripcion: 'error listar carritos' });
+    }
+}
+
 const postCart = async (req, res) => {
     try {
-        const _id = await cartsApi.add(req.body);
-        res.json({ _id: _id });
+        const id = await cartsApi.add(req.body);
+        res.json({ id: id });
     } catch (error) {
         logger.logError(error);
 
@@ -121,4 +133,4 @@ const deleteAllProducts = async (req, res) => {
     }
 }
 
-export { postCart, postProduct, deleteCart, deleteProduct, deleteAllProducts, getCartsProducts };
+export { getCarts, postCart, postProduct, deleteCart, deleteProduct, deleteAllProducts, getCartsProducts };
