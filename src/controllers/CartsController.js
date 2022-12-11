@@ -1,10 +1,12 @@
-import { cartsDao as cartsApi } from '../daos/index.js'
+import { CartRepository } from '../repositories/CartRepository.js'
 import logger from '../utils/logger.js';
 
 
+const cartsApi = new CartRepository();
+
 const postCart = async (req, res) => {
     try {
-        const _id = await cartsApi.save(req.body);
+        const _id = await cartsApi.add(req.body);
         res.json({ _id: _id });
     } catch (error) {
         logger.logError(error);
@@ -51,7 +53,7 @@ const postProduct = async (req, res) => {
     try {
         const cart = await cartsApi.getById(req.params.id);
         cart.products.push(req.body);
-        cartsApi.modifyItemById(req.params.id, cart);
+        cartsApi.modifyById(req.params.id, cart);
         res.json(cart.products);
     } catch (error) {
         logger.logError(error);
@@ -71,7 +73,7 @@ const deleteProduct = async (req, res) => {
             res.json({ error: -9, descripcion: 'el carrito no contiene ese producto' });
         } else {
             cart.products.splice(index, 1);
-            await cartsApi.modifyItemById(req.params.id, cart);
+            await cartsApi.modifyById(req.params.id, cart);
             res.status(204);
             res.send();
         }
@@ -100,7 +102,7 @@ const deleteAllProducts = async (req, res) => {
             res.json({ error: -9, descripcion: 'el carrito no contiene ese producto' });
         } else {
             cart.products = []
-            await cartsApi.modifyItemById(req.params.id, cart);
+            await cartsApi.modifyById(req.params.id, cart);
             res.status(204);
             res.send();
         }
