@@ -1,4 +1,4 @@
-import MongoDbProductsDao from './MongoDbProductsDao.js'
+import MongoDbUsersDao from './MongoDbUsersDao.js'
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 
@@ -8,16 +8,16 @@ console.log(`Persistencia seleccionada: ${persistence}`);
 let dao
 switch (persistence) {
     case 'mongodb':
-        dao = new MongoDbProductsDao()
+        dao = new MongoDbUsersDao()
         break
     // case 'firebase':
-    //     dao = new FirebaseProductsDao()
+    //     dao = new FirebaseOrdersDao()
     //     break
     default:
-        dao = new MongoDbProductsDao()
+        dao = new MongoDbUsersDao()
 }
 
-export default class ProductsDaoFactory {
+export default class UsersDaoFactory {
     static getDao() {
         return dao
     }

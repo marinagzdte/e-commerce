@@ -7,7 +7,7 @@ console.log(`Persistencia seleccionada: ${persistence}`);
 
 let dao
 switch (persistence) {
-    case 'mongo':
+    case 'mongodb':
         dao = new MongoDbMessagesDao()
         break
     // case 'firebase':
