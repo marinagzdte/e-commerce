@@ -1,14 +1,18 @@
 import { Router } from 'express';
-import validateAdmin from '../utils/validateAdmin.js';
-import { getOrder, postOrder, deleteOrder } from '../controllers/OrdersController.js'
+import { checkAdmin, checkAuth } from '../middlewares/auth.js';
+import { getOrders, getOrder, postOrder, deleteOrder } from '../controllers/OrdersController.js'
 import logger from '../utils/logger.js';
 
 const orderRouter = Router();
 
-orderRouter.get('/:id?', logger.logReqInfo, getOrder);
+// si el usuario es admin trae todas las ordenes
+// sino, trae todas las ordenes del usuario logueado
+orderRouter.get('/', logger.logReqInfo, checkAuth, getOrders);
+
+orderRouter.get('/:id', logger.logReqInfo, checkAdmin, getOrder);
 
 orderRouter.post('/', logger.logReqInfo, postOrder);
 
-orderRouter.delete('/:id?', logger.logReqInfo, validateAdmin, deleteOrder);
+orderRouter.delete('/:id?', logger.logReqInfo, checkAdmin, deleteOrder);
 
 export default orderRouter;

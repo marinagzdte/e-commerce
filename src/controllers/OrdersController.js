@@ -1,7 +1,30 @@
 import { OrdersRepository } from '../repositories/OrderRepository.js'
+import { sendNewOrderEmail } from '../utils/emailUtils.js'
+import { isAdmin } from '../middlewares/auth.js';
 import logger from '../utils/logger.js';
 
 const ordersApi = new OrdersRepository();
+let totalOrders = 0;
+
+const getOrders = async (req, res) => {
+    try {
+        let orders;
+        if (isAdmin(req.user)) {
+            orders = await ordersApi.getAll();
+        } else {
+            let aux = await ordersApi.getAll();
+            orders = aux.filter(o => o.email === req.user.email)
+        }    
+        res.json(orders);
+
+    } catch (error) {
+        logger.logError(error)
+
+        res.status(500);
+        res.json({ error: -1, descripcion: 'error al listar los mensajes' });
+    }
+}
+
 
 const getOrder = async (req, res) => {
     if (req.params.id === undefined) {
@@ -32,9 +55,22 @@ const getOrder = async (req, res) => {
 
 const postOrder = async (req, res) => {
     try {
-        const id = await ordersApi.add(req.body);
+        totalOrders++
+        const newOrder = {
+            number: totalOrders,
+            items: req.body.items,
+            timestamp: Date.now().toString(),
+            status: "generated",
+            email: req.user.email,
+            address: req.user.address,
+            phoneNumber: req.user.phoneNumber
+        }
+        const id = await ordersApi.add(newOrder);
+        await sendNewOrderEmail(newOrder);
+
         res.json({ id: id });
     } catch (error) {
+        totalOrders--
         logger.logError(error);
 
         res.status(500);
@@ -72,4 +108,4 @@ const deleteOrder = async (req, res) => {
     }
 }
 
-export { getOrder, postOrder, deleteOrder }
+export { getOrders, getOrder, postOrder, deleteOrder }
