@@ -64,7 +64,15 @@ const getCartsProducts = async (req, res) => {
 const postProduct = async (req, res) => {
     try {
         const cart = await cartsApi.getById(req.params.id);
-        cart.products.push(req.body);
+        const index = cart.products.findIndex(p => p.id == req.body.id)
+        if (index === -1) {
+            const prod = req.body
+            prod.amount = 1
+            cart.products.push(prod);
+        }
+        else
+            cart.products[index].amount += 1
+            
         cartsApi.modifyById(req.params.id, cart);
         res.json(cart.products);
     } catch (error) {
@@ -79,7 +87,7 @@ const deleteProduct = async (req, res) => {
     try {
         const cart = await cartsApi.getById(req.params.id);
 
-        const index = cart.products.findIndex(prod => prod.id === req.params.id_prod || prod._id === req.params.id_prod)
+        const index = cart.products.findIndex(prod => prod.id === req.params.id_prod)
         if (index === -1) {
             res.status(404)
             res.json({ error: -9, descripcion: 'el carrito no contiene ese producto' });
