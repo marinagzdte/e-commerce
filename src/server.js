@@ -3,9 +3,13 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from './middlewares/passport.js';
 import compression from 'compression';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import { productRouter, messageRouter, orderRouter, cartRouter, userRouter } from "./routes/index.js";
+import { MessagesRepository } from './repositories/MessageRepository.js';
 
 const app = express();
+const messagesRepo = new MessagesRepository();
 
 app.use(cookieParser());
 app.use(session({
@@ -37,4 +41,21 @@ app.all('*', (req, res) => {
     res.status(405).json({ error: -2, descripcion: `ruta ${req.url} metodo ${req.method} no implementado` })
 });
 
-export default app;
+/*-----------------------------------------------*/
+/*               socket setup                    */
+/*-----------------------------------------------*/
+
+const httpServer = createServer(app);
+const io = new Server(httpServer);
+
+io.on('connection', async socket => {
+    logger.logInfo('Un cliente se ha conectado.');
+    socket.emit('messages', { messages: await messagesRepo.getAll() });
+
+    socket.on('new-chat-message', async data => {
+        await messagesRepo.add(data);
+        io.sockets.emit('messages', { messages: await messagesRepo.getAll() })
+    });
+});
+
+export default httpServer;

@@ -10,8 +10,6 @@ const isAdmin = (user) => {
 
 const checkAuth = (req, res, next) => {
     if (req.isAuthenticated()) {
-        console.log('usuario logueadi')
-        console.log(req.user)
         next();
     } else
         res.status(403)

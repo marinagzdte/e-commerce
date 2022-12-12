@@ -30,6 +30,19 @@ const getProduct = async (req, res) => {
     }
 }
 
+const getProductsByCategory = async (req, res) => {
+    try {
+        const aux = await productsApi.getAll();
+        const products = aux.filter(p => p.category.toLowerCase() === req.params.category.toLowerCase())
+        res.json(products);
+    } catch (error) {
+        logger.logError(error)
+
+        res.status(500);
+        res.json({ error: -1, descripcion: 'error al listar los productos' });
+    }
+}
+
 const postProduct = async (req, res) => {
     try {
         const id = await productsApi.add(req.body);
@@ -64,7 +77,7 @@ const deleteProduct = async (req, res) => {
         try {
             await productsApi.deleteAll();
             res.status(204)
-               .send();
+                .send();
         } catch (error) {
             logger.logError(error)
 
@@ -75,18 +88,18 @@ const deleteProduct = async (req, res) => {
         try {
             await productsApi.deleteById(req.params.id);
             res.status(204)
-               .send();
+                .send();
         } catch (error) {
             logger.logError(error);
-    
+
             if (error.message.includes('404'))
                 res.status(404);
             else
                 res.status(500);
-    
+
             res.json({ error: -5, descripcion: 'error al borrar producto' });
         }
     }
 }
 
-export { getProduct, postProduct, putProduct, deleteProduct }
+export { getProduct, getProductsByCategory, postProduct, putProduct, deleteProduct }
